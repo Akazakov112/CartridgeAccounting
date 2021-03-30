@@ -1,0 +1,443 @@
+﻿<UserControl x:Class="CartAccClient.View.Controls.CreateExpenseControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviors="clr-namespace:CartAccClient.Behaviors"
+             xmlns:converters="clr-namespace:CartAccClient.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="710"
+             d:DesignWidth="975">
+
+    <UserControl.Resources>
+        <converters:BalanceToBoolConverter x:Key="BalanceToBoolConverter" />
+        <converters:BalanceToStringConverter x:Key="BalanceToStringConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
+
+    <Grid DataContext="{Binding CreateExpenseVm}"
+          Visibility="{Binding IsOpened, Converter={StaticResource BoolToVisibilityConverter}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="290"
+                              MinWidth="290" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--Действия-->
+        <DockPanel Grid.Column="0"
+                   VerticalAlignment="Stretch"
+                   HorizontalAlignment="Stretch"
+                   Margin="3">
+
+            <!--Описание-->
+            <GroupBox Header="Описание"
+                      DockPanel.Dock="Top"
+                      Margin="0,0,0,5">
+
+                <TextBlock TextWrapping="Wrap"
+                           Margin="3">
+                    Создание нового списания картриджа в ОСП.
+                    <LineBreak /><LineBreak />
+                    Доступно для пользователей всех уровней доступа.
+                </TextBlock>
+
+            </GroupBox>
+            
+            <!--Создание списания-->
+            <GroupBox Header="Создание нового списания"
+                      DockPanel.Dock="Top"
+                      Margin="0,5,0,5">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!--Панель обязательных данных-->
+                    <StackPanel Grid.Row="0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+
+                        <!--Панель выбора даты-->
+                        <StackPanel VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Margin="10">
+
+                            <TextBlock Text="Дата"
+                                       FontStyle="Italic"
+                                       VerticalAlignment="Center" />
+
+                            <DatePicker VerticalAlignment="Center"
+                                        Margin="10,0,0,0"
+                                        Width="110"
+                                        Height="28"
+                                        SelectedDate="{Binding NewExpense.Date}" />
+
+                        </StackPanel>
+
+                        <!--Панель ввода основания-->
+                        <StackPanel VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Margin="10">
+
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left">
+
+                                <TextBlock Text="Основание:"
+                                           FontStyle="Italic"
+                                           VerticalAlignment="Center" />
+
+                                <RadioButton Name="RbtnRequest"
+                                             Content="Заявка"
+                                             FontStyle="Italic"
+                                             IsChecked="{Binding BasisChange}"
+                                             VerticalAlignment="Center"
+                                             Margin="10,0,10,0" />
+
+                                <RadioButton Name="RbtnComment"
+                                             Content="Комментарий"
+                                             FontStyle="Italic"
+                                             VerticalAlignment="Center" />
+
+                            </StackPanel>
+
+                            <TextBox Text="{Binding NewExpense.Basis}"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Left"
+                                     Width="240"
+                                     Height="28"
+                                     Margin="0,10,0,0">
+                                <TextBox.Style>
+                                    <Style BasedOn="{StaticResource {x:Type TextBox}}"
+                                           TargetType="TextBox">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=RbtnRequest, Path=IsChecked}"
+                                                         Value="True">
+                                                <Setter Property="Tag"
+                                                        Value="Введите номер заявки" />
+                                                <Setter Property="MaxLength"
+                                                        Value="9" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ElementName=RbtnComment, Path=IsChecked}"
+                                                         Value="True">
+                                                <Setter Property="Tag"
+                                                        Value="Введите комментарий" />
+                                                <Setter Property="MaxLength"
+                                                        Value="100" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+
+                        </StackPanel>
+
+                        <!--Панель поиска по принтеру-->
+                        <StackPanel VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Margin="10">
+
+                            <CheckBox FontStyle="Italic"
+                                      Content="Поиск по принтеру"
+                                      IsChecked="{Binding SearchByPrinter}" />
+
+                            <ComboBox ItemsSource="{Binding PrintersView}"
+                                      Text="{Binding PrintSearch}"
+                                      SelectedItem="{Binding SelectedPrinter}"
+                                      IsEnabled="{Binding SearchByPrinter}"
+                                      DisplayMemberPath="Model"
+                                      IsEditable="True"
+                                      StaysOpenOnEdit="True"
+                                      Height="28"
+                                      Width="240"
+                                      Margin="0,10,0,0" />
+
+                        </StackPanel>
+
+                        <!--Панель поиска по картриджу-->
+                        <StackPanel VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Margin="10">
+
+                            <TextBlock FontStyle="Italic">
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource {x:Type TextBlock}}"
+                                           TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SearchByPrinter}"
+                                                         Value="True">
+                                                <Setter Property="Text"
+                                                        Value="Совместимые картриджи" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SearchByPrinter}"
+                                                         Value="False">
+                                                <Setter Property="Text"
+                                                        Value="Все картриджи" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <ComboBox ItemsSource="{Binding BalanceView}"
+                                      SelectedItem="{Binding SelectedCartridge}"
+                                      Text="{Binding CartSearch}"
+                                      DisplayMemberPath="Cartridge.Model"
+                                      IsEditable="True"
+                                      StaysOpenOnEdit="True"
+                                      Height="28"
+                                      Width="240"
+                                      Margin="0,5,0,0" />
+
+                        </StackPanel>
+
+                        <!--Панель вывода остатков выбора-->
+                        <StackPanel VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Orientation="Horizontal"
+                                    Margin="10">
+
+                            <TextBlock Text="Остаток:"
+                                       FontStyle="Italic"
+                                       VerticalAlignment="Center" />
+
+                            <TextBlock Text="{Binding SelectedCartridge.Count, StringFormat='{}{0} шт.'}"
+                                       VerticalAlignment="Center"
+                                       Margin="10,0,0,0">
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource {x:Type TextBlock}}"
+                                           TargetType="{x:Type TextBlock}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedCartridge.Count, Converter={StaticResource BalanceToBoolConverter}}"
+                                                         Value="False">
+                                                <Setter Property="Foreground"
+                                                        Value="{DynamicResource ControlForeground}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+
+                        </StackPanel>
+
+                        <!--Панель ввода количества и кнопка Записать-->
+                        <StackPanel VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Orientation="Horizontal"
+                                    Margin="10">
+
+                            <TextBlock Text="Взято:"
+                                       FontStyle="Italic"
+                                       VerticalAlignment="Center" />
+
+                            <TextBox Text="{Binding NewExpense.Count}"
+                                     VerticalAlignment="Center"
+                                     Tag="Взято"
+                                     Height="28"
+                                     Width="85"
+                                     Margin="10,0,0,0" />
+
+                            <TextBlock Text="шт."
+                                       FontStyle="Italic"
+                                       Margin="5,0,0,0"
+                                       VerticalAlignment="Center" />
+
+                            <Button Content="Записать"
+                                    Command="{Binding AddExpense}"
+                                    Height="30"
+                                    Width="60"
+                                    Margin="15,0,0,0" />
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </Grid>
+
+            </GroupBox>
+
+            <!--Цветовые обозначения-->
+            <GroupBox Grid.Row="1"
+                      Header="Цветовые обозначения"
+                      DockPanel.Dock="Top"
+                      VerticalAlignment="Top"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,5,0,5">
+
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,10,0,10">
+
+                        <TextBlock Text="По умолчанию - "
+                                   Width="135" />
+
+                        <Border Background="{DynamicResource DataGridRow}"
+                                Height="20"
+                                Width="100"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource ControlForeground}" />
+
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,10,0,10">
+
+                        <TextBlock Text="Помечен на удаление - "
+                                   Width="135" />
+
+                        <Border Background="{DynamicResource DataGridRowDelete}"
+                                Height="20"
+                                Width="100"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource ControlForeground}" />
+
+                    </StackPanel>
+
+                </StackPanel>
+
+            </GroupBox>
+
+        </DockPanel>
+
+        <!--Вертикальный сплиттер для изменения размера-->
+        <GridSplitter Grid.Column="1"
+                      Grid.RowSpan="2"
+                      Background="{DynamicResource ControlForeground}"
+                      ShowsPreview="False"
+                      Width="1"
+                      Margin="2"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch" />
+
+        <!--Списания пользователя за период-->
+        <GroupBox Header="Списания пользователя"
+                  Margin="3"
+                  Grid.Column="2">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!--Панель фильтра-->
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Margin="10">
+
+                    <TextBlock Text="Период: с"
+                               FontStyle="Italic"
+                               VerticalAlignment="Center" />
+
+                    <DatePicker SelectedDate="{Binding FilterStartDate}"
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                Height="28"
+                                Width="110" />
+
+                    <TextBlock Text="по"
+                               FontStyle="Italic"
+                               VerticalAlignment="Center"
+                               Margin="10,0,0,0" />
+
+                    <DatePicker SelectedDate="{Binding FilterEndDate}"
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                Height="28"
+                                Width="100" />
+
+                    <Button Command="{Binding UpdateUserExpenses}"
+                            VerticalAlignment="Center"
+                            Content="Обновить"
+                            Margin="15,0,0,0"
+                            Width="70"
+                            Height="25" />
+
+                </StackPanel>
+
+                <!--Таблица списаний-->
+                <DataGrid Grid.Row="1"
+                          IsReadOnly="True"
+                          ColumnWidth="*"
+                          ColumnHeaderHeight="20"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserResizeRows="False"
+                          HeadersVisibility="Column"
+                          AutoGenerateColumns="False"
+                          EnableRowVirtualization="True"
+                          EnableColumnVirtualization="True"
+                          ItemsSource="{Binding Data.UserData.UserExpenses}"
+                          SelectedItem="{Binding SelectedExpense}">
+
+                    <DataGrid.RowStyle>
+                        <Style BasedOn="{StaticResource {x:Type DataGridRow}}"
+                               TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Delete}"
+                                             Value="False">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource DataGridRow}" />
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding Delete}"
+                                             Value="True">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource DataGridRowDelete}" />
+                                    <Setter Property="Foreground"
+                                            Value="{DynamicResource ControlForegroundGrey}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Binding="{Binding Number}"
+                                            Header="№"
+                                            Width="30"
+                                            MaxWidth="80" />
+
+                        <DataGridTextColumn Binding="{Binding Date, StringFormat='{}{0:dd.MM.yyy}'}"
+                                            Header="Дата"
+                                            Width="70" />
+
+                        <DataGridTextColumn Binding="{Binding Basis}"
+                                            Header="Заявка"
+                                            Width="*" />
+
+                        <DataGridTextColumn Binding="{Binding Cartridge.Model}"
+                                            Header="Картридж"
+                                            Width="150" />
+
+                        <DataGridTextColumn Binding="{Binding Count}"
+                                            Header="Кол-во"
+                                            MinWidth="70"
+                                            Width="70" />
+
+                    </DataGrid.Columns>
+
+                    <i:Interaction.Behaviors>
+                        <behaviors:DatagridScrollToSelectedBehavior />
+                    </i:Interaction.Behaviors>
+
+                </DataGrid>
+
+            </Grid>
+
+        </GroupBox>
+
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,381 @@
+﻿<UserControl x:Class="CartAccClient.View.Controls.OspsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:bh="clr-namespace:CartAccClient.Behaviors"
+             xmlns:converters="clr-namespace:CartAccClient.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="710"
+             d:DesignWidth="975">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:InvertBoolConverter x:Key="InvertBoolConverter" />
+        <converters:MultiInvertBoolConverter x:Key="MultiInvertBoolConverter" />
+    </UserControl.Resources>
+
+    <Grid DataContext="{Binding OspsVm}"
+          Visibility="{Binding IsOpened, Converter={StaticResource BoolToVisibilityConverter}}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="290"
+                              MinWidth="290" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--Действия-->
+        <DockPanel Grid.Column="0"
+                   VerticalAlignment="Stretch"
+                   HorizontalAlignment="Stretch"
+                   Margin="3">
+
+            <!--Описание-->
+            <GroupBox Header="Описание"
+                      DockPanel.Dock="Top"
+                      Margin="0,0,0,5">
+
+                <TextBlock TextWrapping="Wrap"
+                           Margin="3">
+                    В данном окне возможно подключение/отключение ОСП в системе учета.
+                    <LineBreak /><LineBreak />
+                    Редактирование доступно для пользователей с уровнем доступа "Супервайзер".
+                </TextBlock>
+
+            </GroupBox>
+            
+            <!--Поиск-->
+            <GroupBox Header="Фильтр"
+                      DockPanel.Dock="Top"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,5,0,5">
+
+                <!--Поисковая строка-->
+                <TextBox Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         Width="250"
+                         Height="25"
+                         Margin="10"
+                         Tag="Введите название ОСП" />
+
+            </GroupBox>
+
+            <!--Цветовые обозначения-->
+            <GroupBox Header="Цветовые обозначения"
+                      DockPanel.Dock="Top"
+                      VerticalAlignment="Top"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,5,0,5">
+
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,10,0,10">
+
+                        <TextBlock Text="Подключено - "
+                                   Width="150" />
+
+                        <Border Background="{DynamicResource DataGridRow}"
+                                Height="20"
+                                Width="100"
+                                BorderThickness="1"
+                                Margin="5,0,0,0"
+                                BorderBrush="{DynamicResource ControlForeground}" />
+
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,10,0,10">
+
+                        <TextBlock Text="Отключено - "
+                                   Width="150" />
+
+                        <Border Background="{DynamicResource DataGridRowDelete}"
+                                Height="20"
+                                Width="100"
+                                BorderThickness="1"
+                                Margin="5,0,0,0"
+                                BorderBrush="{DynamicResource ControlForeground}" />
+
+                    </StackPanel>
+
+                </StackPanel>
+
+            </GroupBox>
+
+        </DockPanel>
+
+        <!--Вертикальный сплиттер для изменения размера-->
+        <GridSplitter Grid.Column="1"
+                      Background="{DynamicResource ControlForeground}"
+                      ShowsPreview="False"
+                      Width="1"
+                      Margin="2"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch" />
+
+        <!--Вывод информации-->
+        <Grid Grid.Column="2"
+              Margin="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="220"
+                               MinHeight="220" />
+            </Grid.RowDefinitions>
+
+            <!--Таблица ОСП-->
+            <GroupBox Grid.Row="0"
+                      Header="Все ОСП"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch">
+
+                <!--Таблица ОСП-->
+                <DataGrid IsReadOnly="True"
+                          ColumnWidth="*"
+                          ColumnHeaderHeight="20"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserResizeRows="False"
+                          HeadersVisibility="Column"
+                          AutoGenerateColumns="False"
+                          EnableRowVirtualization="True"
+                          EnableColumnVirtualization="True"
+                          ItemsSource="{Binding OspsView}"
+                          SelectedItem="{Binding SelectedOsp}">
+
+                    <DataGrid.RowStyle>
+                        <Style BasedOn="{StaticResource {x:Type DataGridRow}}"
+                               TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Active}"
+                                             Value="True">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource DataGridRow}" />
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding Active}"
+                                             Value="False">
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource DataGridRowDelete}" />
+                                    <Setter Property="Foreground"
+                                            Value="{DynamicResource ControlForegroundGrey}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Binding="{Binding Id}"
+                                            Header="№"
+                                            Width="30"
+                                            MaxWidth="80" />
+
+                        <DataGridTextColumn Binding="{Binding Name}"
+                                            Header="Название"
+                                            Width="*" />
+
+                    </DataGrid.Columns>
+
+                    <i:Interaction.Behaviors>
+                        <bh:DatagridScrollToSelectedBehavior />
+                    </i:Interaction.Behaviors>
+
+                </DataGrid>
+
+            </GroupBox>
+
+            <!--Сплиттер для изменения размера-->
+            <GridSplitter Grid.Row="1"
+                          Background="{DynamicResource ControlForeground}"
+                          ShowsPreview="False"
+                          Height="1"
+                          Margin="2"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Center" />
+
+            <!--Выбранное ОСП-->
+            <GroupBox Grid.Row="2"
+                      Header="Выбранный документ"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--Кнопки действий с ОСП-->
+                    <StackPanel Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Margin="5,20,5,0">
+
+                        <Button Command="{Binding MakeNewOsp}"
+                                VerticalAlignment="Center"
+                                Content="Создать"
+                                Width="80"
+                                Height="30"
+                                ToolTipService.ShowOnDisabled="True"
+                                IsEnabled="{Binding CanEdit, Converter={StaticResource InvertBoolConverter}, NotifyOnSourceUpdated=True}"
+                                Margin="0,0,0,15">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource {x:Type Button}}"
+                                       TargetType="Button">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled"
+                                                 Value="False">
+                                            <Setter Property="ToolTip"
+                                                    Value="Доступно для уровня доступа &quot;Супервайзер&quot; и выше" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Command="{Binding StartEdit}"
+                                VerticalAlignment="Center"
+                                Content="Изменить"
+                                Width="80"
+                                Height="30"
+                                ToolTipService.ShowOnDisabled="True"
+                                IsEnabled="{Binding CanEdit, Converter={StaticResource InvertBoolConverter}, NotifyOnSourceUpdated=True}">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource {x:Type Button}}"
+                                       TargetType="Button">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled"
+                                                 Value="False">
+                                            <Setter Property="ToolTip"
+                                                    Value="Доступно для уровня доступа &quot;Супервайзер&quot; и выше" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Command="{Binding AcceptChanges}"
+                                IsEnabled="{Binding CanEdit, NotifyOnSourceUpdated=True}"
+                                VerticalAlignment="Center"
+                                Content="Сохранить"
+                                Width="80"
+                                Height="30"
+                                Margin="0,15,0,15" />
+
+                        <Button Command="{Binding DiscardChanges}"
+                                IsEnabled="{Binding CanEdit, NotifyOnSourceUpdated=True}"
+                                VerticalAlignment="Center"
+                                Content="Отмена"
+                                Width="80"
+                                Height="30" />
+
+                    </StackPanel>
+
+                    <!--Отображение информации-->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="60" />
+                        </Grid.RowDefinitions>
+
+                        <!--Заголовок-->
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="5">
+
+                            <!--Название-->
+                            <TextBlock FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock"
+                                           BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="Text"
+                                                Value="{Binding SelectedOsp.Name, StringFormat='{}ОСП {0}'}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedOsp.Id}"
+                                                         Value="0">
+                                                <Setter Property="Text"
+                                                        Value="Новое ОСП" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <!--Метка активности-->
+                            <CheckBox HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Margin="10,0,0,0"
+                                      IsEnabled="{Binding CanEdit}"
+                                      IsChecked="{Binding SelectedOsp.Active}">
+
+                                <CheckBox.Style>
+                                    <Style BasedOn="{StaticResource {x:Type CheckBox}}"
+                                           TargetType="{x:Type CheckBox}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsChecked"
+                                                     Value="True">
+                                                <Setter Property="Content"
+                                                        Value="Подключено." />
+                                            </Trigger>
+                                            <Trigger Property="IsChecked"
+                                                     Value="False">
+                                                <Setter Property="Content"
+                                                        Value="Отключено." />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </CheckBox.Style>
+
+                            </CheckBox>
+
+                        </StackPanel>
+
+                        <!--Название-->
+                        <StackPanel Grid.Row="1"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Margin="10,0,10,0">
+
+                            <TextBlock VerticalAlignment="Center"
+                                       FontStyle="Italic"
+                                       Text="Название:"
+                                       Width="80" />
+
+                            <TextBox VerticalAlignment="Center"
+                                     Margin="10,0,0,0"
+                                     Text="{Binding SelectedOsp.Name, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="400"
+                                     Height="30">
+                                <TextBox.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource MultiInvertBoolConverter}">
+                                        <Binding Path="CanEdit" />
+                                        <Binding Path="SelectedOsp.Active" />
+                                    </MultiBinding>
+                                </TextBox.IsEnabled>
+                            </TextBox>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                </Grid>
+
+            </GroupBox>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

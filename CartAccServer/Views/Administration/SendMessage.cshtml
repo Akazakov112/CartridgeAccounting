@@ -1,0 +1,29 @@
+﻿@model CartAccServer.ViewModel.SendMessageVm
+@{
+    ViewData["Title"] = "Учет картриджей - Отправка сообщения";
+}
+
+<div class="text-center">
+    <h4 class="text-white">Отправка сообщения.</h4>
+    <form asp-controller="Administration" asp-action="SendMessage" method="post" asp-antiforgery="true">
+        <div class="form-group row align-items-center mx-auto">
+            <label class="col-1" asp-for="RecepientConnectionId">Выберите получателя</label>
+            <select class="col mx-3 form-control custom-select shadow" asp-for="RecepientConnectionId" required>
+                @foreach (var rec in Model.Recipients)
+                {
+                    <option value="@rec.ConnectionId">@rec.Name </option>
+                }
+            </select>
+            <input class="col-1 btn btn-secondary" type="submit" value="Отправить" />
+        </div>
+        <div class="validation text-white row text-left mx-auto" asp-validation-summary="All"></div>
+        <h4 class="text-white">Введите сообщение:</h4>
+        <div class="form-group row mx-auto">
+            <textarea class="form-control h-100" asp-for="Message" rows="10" placeholder="Введите сообщение..."></textarea>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

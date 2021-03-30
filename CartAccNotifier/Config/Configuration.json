@@ -1,0 +1,13 @@
+{
+  "ConnectionStrings": {
+    "DbConnection": "Server=server;Database=database;Trusted_Connection=SSPI;"
+  },
+
+  "SmtpServer": "smtp.mail.ru",
+
+  "SmtpPort": "25",
+
+  "SenderAddress": "address@mail.ru",
+
+  "MinBalanceCount": "3"
+}

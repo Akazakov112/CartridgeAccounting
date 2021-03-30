@@ -1,0 +1,29 @@
+﻿@model CartAccServer.ViewModel.StatisticVm
+@{
+    ViewData["Title"] = "Учет картриджей - Статистика";
+}
+
+<div class="text-center">
+    <h4 class="text-white">Общая статистика:</h4>
+    <div class="row my-2 align-items-center mx-auto">
+        <span class="col text-white">Всего онлайн @Model.AllUsersCount пользователей в @Model.OspCount ОСП.</span>
+    </div>
+    <h4 class="text-white">Список пользователей онлайн:</h4>
+    <table class="table table-dark table-bordered my-2 shadow">
+        <tr>
+            <th>Connection Id</th>
+            <th>Имя</th>
+            <th>ОСП</th>
+            <th>Версия клиента</th>
+        </tr>
+        @foreach (var u in Model.Users)
+        {
+            <tr>
+                <td>@u.ConnectionId</td>
+                <td>@u.Name</td>
+                <td>@u.Osp</td>
+                <td>@u.ClientVersion</td>
+            </tr>
+        }
+    </table>
+</div>

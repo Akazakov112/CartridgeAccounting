@@ -1,0 +1,39 @@
+﻿<Window x:Class="Updater.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Updater.ViewModel"
+        mc:Ignorable="d"
+        Title="Обновление." 
+        Height="90" 
+        Width="300"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Background}">
+    
+    <Window.Resources>
+        <RadialGradientBrush x:Key="Background" GradientOrigin="0.5,0">
+            <GradientStop Color="#FF292929" Offset="1"/>
+            <GradientStop Color="#FE565555" Offset="0.082"/>
+        </RadialGradientBrush>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:MainFormVm/>
+    </Window.DataContext>
+
+    <Grid Margin="10">
+
+        <ProgressBar Foreground="#fcaf17"
+                     Background="#787878"
+                     Minimum="0"
+                     IsIndeterminate="{Binding IsInstalling}"/>
+
+        <TextBlock HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"
+                   Text="{Binding StatusText}"/>
+
+    </Grid>
+    
+</Window>

@@ -1,0 +1,95 @@
+﻿<Window x:Class="CartAccClient.View.UpdateAppForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv="clr-namespace:CartAccClient.Converters"
+        xmlns:vm="clr-namespace:CartAccClient.ViewModel"
+        mc:Ignorable="d"
+        x:Name="UpdateForm"
+        Title="{Binding Update.Date, StringFormat='{}Обновление программы от {0:dd.MM.yyyy} г.'}"
+        MinHeight="200"
+        Width="450"
+        SizeToContent="Height"
+        ResizeMode="NoResize" 
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource ControlBackground}">
+
+    <Window.DataContext>
+        <vm:UpdateAppVm/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibleConverter"/>
+    </Window.Resources>
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <!--Информация о версии-->
+        <TextBlock FontWeight="Bold"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Text="{Binding Update.Version, StringFormat='{}Обновление до версии: {0}.'}"
+                   Margin="10,0,10,0"/>
+
+        <!--Информация об обновлении-->
+        <TextBlock Grid.Row="1"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Margin="10,0,10,0"
+                   TextWrapping="Wrap">
+            <Run Text="Изменения:"/>
+            <LineBreak/>
+            <Run Text="{Binding Update.Info, StringFormat='{}{0}'}"/>
+        </TextBlock>
+
+        <!--Панель кнопок-->
+        <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Grid.Row="2">
+
+            <Button Command="{Binding StartUpdate}"
+                    VerticalAlignment="Center"
+                    Content="Обновить"
+                    Width="70"
+                    Height="30"/>
+
+            <Button Command="{Binding Close}"
+                    CommandParameter="{Binding ElementName=UpdateForm}"
+                    VerticalAlignment="Center"
+                    Content="Отменить"
+                    Margin="40,0,0,0"
+                    Width="70"
+                    Height="30"/>
+
+        </StackPanel>
+
+        <!--Инфо-->
+        <StackPanel Grid.Row="3"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center">
+
+            <TextBlock HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"
+                       Margin="10,0,10,0"
+                       Text="{Binding StatusText}"/>
+
+            <ProgressBar VerticalAlignment="Bottom"
+                         HorizontalAlignment="Center"
+                         Height="15"
+                         IsIndeterminate="{Binding StatusUpdate}"
+                         Width="{Binding ElementName=UpdateForm, Path=Width}"
+                         Visibility="{Binding StatusUpdate, Converter={StaticResource BoolToVisibleConverter}}"/>
+
+        </StackPanel>
+
+    </Grid>
+    
+</Window>

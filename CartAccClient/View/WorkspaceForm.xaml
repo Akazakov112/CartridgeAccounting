@@ -1,0 +1,446 @@
+﻿<Window x:Class="CartAccClient.View.WorkspaceForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:behaviors="clr-namespace:CartAccClient.Behaviors"
+        xmlns:converters="clr-namespace:CartAccClient.Converters"
+        xmlns:controls="clr-namespace:CartAccClient.View.Controls"
+        xmlns:vm="clr-namespace:CartAccClient.ViewModel"
+        mc:Ignorable="d"
+        Title="{Binding Version, StringFormat='{}Учет картриджей, build {0}.'}"
+        Height="900"
+        Width="1300"
+        MinHeight="900"
+        MinWidth="1300"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource ControlBackground}"
+        StateChanged="Window_StateChanged"
+        tb:TaskbarIcon.TrayMouseDoubleClick="Window_TrayMouseDoubleClick">
+
+    <Window.DataContext>
+        <vm:WorkspaceVm />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converters:LogMessageTypeConverter x:Key="LogMessageTypeConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="110" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+
+        <!--Иконка в трее-->
+        <tb:TaskbarIcon Visibility="Visible"
+                        ToolTipText="{Binding Version, StringFormat='{}Учет картриджей, build {0}.'}"
+                        IconSource="App.ico">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Настройки"
+                              Command="{Binding Settings}" />
+                    <MenuItem Header="Выход"
+                              Command="{Binding Exit}" />
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+
+        <!--Рабочие области-->
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=IsLogVisible, Path=IsChecked}"
+                                     Value="False">
+                            <Setter Property="Grid.RowSpan"
+                                    Value="3" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <!--Навигация-->
+            <GroupBox Header="Навигация"
+                      Margin="3,3,0,3">
+
+                <DockPanel>
+
+                    <!--Дерево навигации-->
+                    <TreeView DockPanel.Dock="Top"
+                              BorderThickness="0">
+
+                        <!--Создание списаний-->
+                        <TreeViewItem Header="Создание списаний"
+                                      IsSelected="{Binding CreateExpenseVm.IsOpened}">
+                            <TreeViewItem.InputBindings>
+                                <MouseBinding Gesture="LeftClick"
+                                              Command="{Binding ChangeField}"
+                                              CommandParameter="CreateExpenseVm" />
+                            </TreeViewItem.InputBindings>
+                        </TreeViewItem>
+
+                        <!--Журналы ОСП-->
+                        <TreeViewItem Header="Журналы ОСП"
+                                      IsExpanded="True">
+
+                            <!--Баланс-->
+                            <TreeViewItem Header="Баланс"
+                                          IsSelected="{Binding BalanceVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="BalanceVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                            <!--Списания-->
+                            <TreeViewItem Header="Списания"
+                                          IsSelected="{Binding ExpensesVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="ExpensesVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                            <!--Поступления-->
+                            <TreeViewItem Header="Поступления"
+                                          IsSelected="{Binding ReceiptsVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="ReceiptsVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                            <!--Поставщики-->
+                            <TreeViewItem Header="Поставщики"
+                                          IsSelected="{Binding ProvidersVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="ProvidersVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                            <!--Электронная почта-->
+                            <TreeViewItem Header="Электронная почта"
+                                          IsSelected="{Binding EmailsVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="EmailsVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                        </TreeViewItem>
+
+                        <!--Справочники-->
+                        <TreeViewItem Header="Справочники"
+                                      IsExpanded="True">
+
+                            <!--Картриджи-->
+                            <TreeViewItem Header="Картриджи"
+                                          IsSelected="{Binding CartridgesVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="CartridgesVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                            <!--Принтеры-->
+                            <TreeViewItem Header="Принтеры"
+                                          IsSelected="{Binding PrintersVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="PrintersVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                        </TreeViewItem>
+
+                        <!--Управление-->
+                        <TreeViewItem Header="Управление"
+                                      IsExpanded="True">
+
+                            <!--ОСП-->
+                            <TreeViewItem Header="ОСП"
+                                          IsSelected="{Binding OspsVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="OspsVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                            <!--Пользователи-->
+                            <TreeViewItem Header="Пользователи"
+                                          IsSelected="{Binding UsersVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="UsersVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                        </TreeViewItem>
+
+                        <!--Отчеты-->
+                        <TreeViewItem Header="Отчеты"
+                                      IsExpanded="True">
+
+                            <!--Движение картриджей-->
+                            <TreeViewItem Header="Движение картриджей"
+                                          IsSelected="{Binding MotionReportVm.IsOpened}">
+                                <TreeViewItem.InputBindings>
+                                    <MouseBinding Gesture="LeftClick"
+                                                  Command="{Binding ChangeField}"
+                                                  CommandParameter="MotionReportVm" />
+                                </TreeViewItem.InputBindings>
+                            </TreeViewItem>
+
+                        </TreeViewItem>
+
+                    </TreeView>
+
+                    <!--Кнопки-->
+                    <StackPanel DockPanel.Dock="Bottom"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                Margin="0,0,0,10">
+
+                        <!--Настройки-->
+                        <Button Content="Настройки"
+                                Height="25"
+                                Width="140"
+                                Margin="0,5,0,5"
+                                Command="{Binding Settings}" />
+
+                        <!--Проверить обновления-->
+                        <Button Content="Проверить обновления"
+                                Height="25"
+                                Width="140"
+                                Margin="0,5,0,5"
+                                Command="{Binding CheckUpdate}" />
+
+                        <!--Справка-->
+                        <Button Content="Справка"
+                                Height="25"
+                                Width="140"
+                                Margin="0,5,0,5"
+                                Command="{Binding Help}" />
+
+                        <!--О программе-->
+                        <Button Content="О программе"
+                                Height="25"
+                                Width="140"
+                                Margin="0,5,0,5"
+                                Command="{Binding About}" />
+
+                    </StackPanel>
+
+                    <!--Панель подключения к другому ОСП-->
+                    <Border DockPanel.Dock="Bottom"
+                            BorderThickness="1"
+                            VerticalAlignment="Bottom"
+                            BorderBrush="{DynamicResource ControlBorderBrush}"
+                            Margin="5,10"
+                            Padding="5">
+
+                        <StackPanel>
+
+                            <TextBlock Text="Сменить ОСП:"
+                                       Foreground="{DynamicResource ControlForeground}"
+                                       Margin="5"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" />
+
+                            <ComboBox ItemsSource="{Binding OspsView}"
+                                      Text="{Binding SearchString}"
+                                      SelectedItem="{Binding SelectedOsp}"
+                                      DisplayMemberPath="Name"
+                                      IsEditable="True"
+                                      StaysOpenOnEdit="True" />
+
+                            <!--Подключение к ОСП-->
+                            <Button Content="Подключиться"
+                                    Height="25"
+                                    Width="140"
+                                    Margin="0,5,0,5"
+                                    ToolTipService.ShowOnDisabled="True"
+                                    Command="{Binding ConnectToOsp}">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource {x:Type Button}}"
+                                           TargetType="Button">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled"
+                                                     Value="False">
+                                                <Setter Property="ToolTip"
+                                                        Value="Доступно для уровня доступа &quot;Менеджер&quot; и выше" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                        </StackPanel>
+
+                    </Border>
+
+                </DockPanel>
+
+            </GroupBox>
+
+            <!--Область создания списаний-->
+            <controls:CreateExpenseControl Grid.Column="1" />
+
+            <!--Область баланса ОСП-->
+            <controls:BalanceControl Grid.Column="1" />
+
+            <!--Область списаний ОСП-->
+            <controls:ExpensesControl Grid.Column="1" />
+
+            <!--Область поступлений ОСП-->
+            <controls:ReceiptsControl Grid.Column="1" />
+
+            <!--Область поставщиков ОСП-->
+            <controls:ProvidersControl Grid.Column="1" />
+
+            <!--Область электронной почты ОСП-->
+            <controls:EmailsControl Grid.Column="1" />
+
+            <!--Область справочника картриджей-->
+            <controls:CartridgesControl Grid.Column="1" />
+
+            <!--Область справочника принтеров-->
+            <controls:PrintersControl Grid.Column="1" />
+
+            <!--Область управления ОСП-->
+            <controls:OspsControl Grid.Column="1" />
+
+            <!--Область управления пользователями-->
+            <controls:UsersControl Grid.Column="1" />
+
+            <!--Область отчета по движению картриджей-->
+            <controls:MotionReportControl Grid.Column="1" />
+
+        </Grid>
+
+        <!--Сплиттер для изменения размера окна лога-->
+        <GridSplitter Grid.Row="1"
+                      Visibility="{Binding ElementName=IsLogVisible, Path=IsChecked, Converter={StaticResource BoolToVisibilityConverter}}"
+                      Background="{DynamicResource ControlForeground}"
+                      ShowsPreview="False"
+                      Height="1"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center" />
+
+        <!--Панель лога-->
+        <DockPanel Grid.Row="2"
+                   LastChildFill="True"
+                   Visibility="{Binding ElementName=IsLogVisible, Path=IsChecked, Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <StackPanel Orientation="Horizontal"
+                        DockPanel.Dock="Top">
+
+                <TextBlock Text="Сообщения от сервера."
+                           FontStyle="Italic"
+                           DockPanel.Dock="Top"
+                           VerticalAlignment="Center"
+                           Margin="3"
+                           Foreground="{DynamicResource ControlForeground}" />
+
+                <Button Content="Очистить"
+                        FontSize="11"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Margin="20,0,0,0"
+                        Command="{Binding ClearLog}" />
+
+            </StackPanel>
+
+            <ListBox DockPanel.Dock="Bottom"
+                     ItemsSource="{Binding ServerConnect.Log}"
+                     SelectedItem="{Binding ServerConnect.SelectedLog}">
+
+                <ListBox.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource {x:Type ListBoxItem}}"
+                           TargetType="ListBoxItem">
+                        <Setter Property="Foreground"
+                                Value="{Binding Type, Converter={StaticResource LogMessageTypeConverter}}" />
+                        <Setter Property="Content"
+                                Value="{Binding Message}" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <i:Interaction.Behaviors>
+                    <behaviors:ListboxScrollToSelectedBehavior />
+                </i:Interaction.Behaviors>
+
+            </ListBox>
+
+        </DockPanel>
+
+        <!--Статус бар-->
+        <StatusBar Grid.Row="3"
+                   Margin="3"
+                   VerticalContentAlignment="Center"
+                   HorizontalContentAlignment="Left">
+
+            <!--Состояние подключения-->
+            <TextBlock VerticalAlignment="Center">
+                <TextBlock.Style>
+                    <Style BasedOn="{StaticResource {x:Type TextBlock}}"
+                           TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ServerConnect.Status}"
+                                         Value="True">
+                                <Setter Property="Text"
+                                        Value="Подключено" />
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource ConnectStatusOnline}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ServerConnect.Status}"
+                                         Value="False">
+                                <Setter Property="Text"
+                                        Value="Ожидание подключения" />
+                                <Setter Property="Foreground"
+                                        Value="{DynamicResource ConnectStatusOffline}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <!--Инфо опользователе-->
+            <TextBlock Text="{Binding Data.UserData.CurrentUser.Fullname, StringFormat='{}Пользователь: {0}'}" />
+
+            <!--Инфо об ОСП-->
+            <TextBlock Text="{Binding Data.UserData.CurrentUser.Osp.Name, StringFormat='{}ОСП: {0}'}" />
+
+            <!--Инфо об уровне доступа-->
+            <TextBlock Text="{Binding Data.UserData.CurrentUser.Access.Name, StringFormat='{}Уровень доступа: {0}'}" />
+
+            <!--Отображение лога-->
+            <CheckBox Name="IsLogVisible"
+                      IsChecked="True"
+                      Content="Отображать лог" />
+
+        </StatusBar>
+
+    </Grid>
+
+</Window>

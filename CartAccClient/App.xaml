@@ -1,0 +1,19 @@
+﻿<Application x:Class="CartAccClient.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="View/StartAppForm.xaml"
+             Startup="Application_Startup">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="/CartAccClient;component/Style/LightBrushes.xaml" />
+                <ResourceDictionary Source="/CartAccClient;component/Style/DarkBrushes.xaml" />
+                <ResourceDictionary Source="/CartAccClient;component/Style/Core.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

@@ -1,0 +1,6 @@
+{
+  "ServerAddress": "server",
+  "ServerPort": "5050",
+  "ServerPath": "cartaccuser",
+  "UseDarkTheme": "True"
+}

@@ -1,0 +1,47 @@
+﻿@model CartAccServer.ViewModel.UploadUpdateVm
+@{
+    ViewData["Title"] = "Учет картриджей - Загрузка обновлений";
+}
+
+<div class="text-center">
+    <h4 class="text-white">Загрузка файла обновления клиента:</h4>
+    <form asp-controller="Administration" asp-action="UploadUpdate" method="post" enctype="multipart/form-data" asp-antiforgery="true">
+        <div class="form-group row align-items-center mx-auto">
+            <label class="col-1 col-form-label" asp-for="UpdateFile">Выберите файл</label>
+            <input class="col mx-3 form-control-file text-white shadow" type="file" asp-for="UpdateFile" />
+            <label class="col-1 mx-2 col-form-label border-warning" asp-for="Version">Версия</label>
+            <input class="col-1 form-control shadow" type="number" asp-for="Version" />
+        </div>
+        <div class="form-group row align-items-center mx-auto">
+            <label class="col-1 col-form-label" asp-for="Description">Описание</label>
+            <input class="col mx-3 form-control shadow" type="text" asp-for="Description" />
+            <input class="col-1 btn btn-secondary shadow" type="submit" value="Загрузить" />
+        </div>
+        <div class="validation text-white row text-left mx-auto" asp-validation-summary="All"></div>
+    </form>
+
+    <h4 class="text-white">Все обновления:</h4>
+    <table class="table table-dark table-bordered shadow">
+        <tr>
+            <th>Id</th>
+            <th>Дата</th>
+            <th>Версия</th>
+            <th>Описание</th>
+            <th>Расположение файла</th>
+        </tr>
+        @foreach (var f in Model.AllUpdates)
+        {
+            <tr>
+                <td>@f.Id</td>
+                <td>@f.Date.ToString("dd.MM.yyyy")</td>
+                <td>@f.Version</td>
+                <td>@f.Info</td>
+                <td>@f.Filename</td>
+            </tr>
+        }
+    </table>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
